@@ -1,8 +1,27 @@
 from fsm import *
+from transitions import MachineError
+import pytest
 
 def apply_event(fsm, event):
     evt = Event(event)
     evt.apply_to_fsm(fsm)
+
+def test_event_constructor():
+    with pytest.raises(FSMException) as excinfo:
+        Event("bad event")
+    assert "Error: unexpected Event:" in str(excinfo.value)
+
+    evt = Event("PASSIVE")
+    assert evt.event == "PASSIVE"
+
+def test_invalid_transition():
+    machine = FSM()
+
+    with pytest.raises(MachineError) as excinfo:
+        evt = Event("ACK") # no transition from CLOSED involving ACK event
+        evt._apply_to_fsm(machine)
+
+    assert "Can't trigger event ACK from state CLOSED!" in str(excinfo.value)
 
 def test_fsm_constructor():
     machine = FSM()

@@ -8,7 +8,7 @@ class Event:
 
     def __init__(self, event):
         if not isinstance(event, str):
-            raise FSMException("not a valid string input")
+            raise FSMException(f"not a valid string input: {event}")
         if event not in self.events:
             raise FSMException(event)
 
@@ -28,12 +28,15 @@ class Event:
             msg = f"Event {self.event} received, current state is {state}"
 
         print(msg)
+        return msg
 
     def apply_to_fsm(self, fsm):
         try:
-            self._apply_to_fsm(fsm)
+            msg = self._apply_to_fsm(fsm)
         except MachineError:
-            print("Error: Invalid state transition")
+            msg = "Error: Invalid state transition"
+            print(msg)
+        return msg
 
 class FSMException(Exception):
     def __init__(self, event):
